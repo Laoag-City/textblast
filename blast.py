@@ -1,18 +1,33 @@
 # Text blast app by eihcek https://kechie.github.io
-# Enumerate and open serial port (win), open phone numbers file or paste to control/widget
+# Enumerate and open serial port (win), open phone numbers file or paste to element/widget
 # input sms message and generate random delay ranging from 5 to 60 seconds between sends
-# open a sent file (text or csv)
+# open a sent logfile (text or csv)
 # TODO: multithreaded serial comms
-import serial, serial.tools.list_ports, PySimpleGUI
-        
-comports = serial.tools.list_ports.comports()
-portinfo = serial.tools.list_ports
-#comport = portinfo.grep()
+import time, serial, serial.tools.list_ports, PySimpleGUI
+
+theports = serial.tools.list_ports.comports()
 modem = serial.Serial()
 modem.baudrate=115200
-modem.port = ''
 modem.timeout = 1
+modem.port = ''
+atcmd = 'AT\r'
+atresp = ''
+portdesc = ''
 
-print(comports)
-print(portinfo)
-print(modem)
+# Test presence of serial GSM modem
+for i in range(len(theports)):
+    portdesc=theports[i].description[0:10].lower()
+    if portdesc == 'usb-serial':
+        modem.port = theports[i].device
+        break
+# 2 send at command
+# 3 check response
+modem.open()
+print('open')
+cmd="AT\n"
+modem.write(cmd.encode())
+modem.readline()
+time.sleep(5)
+atresp = modem.readline().decode()
+print(atresp)
+modem.close()
