@@ -14,7 +14,13 @@ atcmd = 'AT\r'
 atresp = ''
 portdesc = ''
 
+# ------ Menu Definition ------ #
+menu_def = [['&File', ['&Open', '&Save', 'E&xit', 'Properties']],
+            ['&Edit', ['Paste', ['Special', 'Normal', ], 'Undo'], ],
+            ['&Help', '&About...'], ]
+
 # Test presence of serial GSM modem
+
 for i in range(len(theports)):
     portdesc=theports[i].description[0:10].lower()
     if portdesc == 'usb-serial':
