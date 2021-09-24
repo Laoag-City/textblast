@@ -1,4 +1,5 @@
 # Text blast app by eihcek https://kechie.github.io
+# Tested with sim800l module with ch340 usb serial uart to ttl 
 # Enumerate and open serial port,
 # input sms message and generate random delay ranging from 5 to 60 seconds between sends
 # open a sent logfile (text or csv)
@@ -39,7 +40,7 @@ layout = [[
 window = sg.Window('Spam in the place where I work now...', layout, default_element_size=(40, 1), grab_anywhere=False)
 
 # Test presence of serial GSM modem
-# TODO: us pyserial in_waiting() method
+# TODO: use asyncio / multithread (or not)
 # check for the serial port that accepts AT commands
 for i in range(len(theports)):
     portdesc=theports[i].description[0:10].lower()
@@ -52,7 +53,7 @@ for i in range(len(theports)):
         break
 
 if modem.port == '':
-    print('No GSM Modem')
+    # print('No GSM Modem')
     sg.Popup('Error', 'No GSM modem')
     modem.close()
     window.close()
@@ -61,7 +62,7 @@ if modem.port == '':
 while True:
     event, values = window.read()
     if event == sg.WIN_CLOSED or event == 'Exit':
-        print('clicked x',values[0], values[1])
+        # print('clicked x',values[0], values[1])
         modem.close()
         break
     if values [0] != '+639123456789' and values[1] != 'message':
@@ -73,37 +74,33 @@ while True:
         phonelist = str(values[0]).splitlines()
         modem.open()
         modem.write(atcmd.encode())
-        time.sleep(1)
-        print(repr(modem.readline()))
+        time.sleep(0.1)
+        # print(repr(modem.readline()))
         # init modem to full functionality
         atcmd='AT+CFUN=1\r\n'
         modem.write(atcmd.encode())
         time.sleep(0.1)
-        print(repr(modem.readline()))
+        # print(repr(modem.readline()))
         atcmd='AT+CMGF=1\r\n'
         modem.write(atcmd.encode())
-        print(repr(modem.readline()))
+        # print(repr(modem.readline()))
         time.sleep(0.1)
         atcmd='AT+CSCS=\"GSM\"\r\n'
         modem.write(atcmd.encode())
-        print(repr(modem.readline()))
-        time.sleep(0.1)
         # print(repr(modem.readline()))
-        # time.sleep(1)
-        # atresp = modem.readline().decode()
-        # print(repr(atresp))
+        time.sleep(0.1)
         for i in phonelist:
             # Note: AT commands and replies is terminated with \r\n
             # SMS message ends with (^Z) to instruct send
             atcmd='AT+CMGS=\"' + str(i) +'"\r\n'
             print(repr(atcmd))
             modem.write(atcmd.encode())
-            print(repr(modem.readline()))
+            # print(repr(modem.readline()))
             time.sleep(1)
             modem.write(smsinput)
             print(repr(smsinput))
-            print(repr(modem.readline()))
+            # print(repr(modem.readline()))
             time.sleep(senddelay-1)
             #TODO: randomize senddelay
     else:
-        print('values not changed', values[0], values[1])
+        # print('values not changed', values[0], values[1])
