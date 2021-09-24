@@ -2,9 +2,14 @@ from os import read
 from tkinter.constants import VERTICAL
 import PySimpleGUI as sg
 from PySimpleGUI.PySimpleGUI import Cancel, Input, Multiline, Submit
+import time
+# from curses import ascii
 
 sg.ChangeLookAndFeel('BlueMono')
 phonelist = []
+atcmd=''
+atsmd=''
+smsdelay = 1
 # ------ Menu Definition ------
 menu_def = [['&File', ['&Open', '&Save', 'E&xit']],
             ['&Edit', ['Paste', ['Special', 'Normal', ], 'Undo'], ],
@@ -22,18 +27,26 @@ layout = [[
 ]]
 
 window = sg.Window('Spam in the place where I work now...', layout, default_element_size=(40, 1), grab_anywhere=False)
-
+atcmd='AT+CMGS=\"GSM\"'
 while True:
     event, values = window.read()
     if event == sg.WIN_CLOSED or event == 'Exit': # if user closes window or clicks cancel
       #     print('closed',values[0], values[1])
           break
     if values [0] != '+639123456789' and values[1] != 'message':
+          #disable Blast button
       #     print('values changed')
       #     print(repr(values[0]))
+# AT
+# AT+CMGF=1
+            atsmd=str(values[1])+chr(26)
             phonelist = str(values[0]).splitlines()
             for i in phonelist:
-                  print(i)
+                  atcmd='at+cmgs=' + i +'\r\n'
+                  print(repr(atcmd))
+                  print(repr(atsmd))
+                  # print(repr(ascii.ctrl('z')))
+                  time.sleep(smsdelay)
 #     else:
       #     pass
       #     print('not closed', values[0], values[1])
