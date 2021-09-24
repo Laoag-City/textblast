@@ -28,6 +28,12 @@ layout = [[
 
 window = sg.Window('Spam in the place where I work now...', layout, default_element_size=(40, 1), grab_anywhere=False)
 atcmd='AT+CMGS=\"GSM\"'
+smsmessage='lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet'
+print(len(smsmessage))
+# if len(smsmessage)>160
+info = (smsmessage[:160]) if len(smsmessage) > 160 else smsmessage
+print(smsmessage)
+print(info)
 while True:
     event, values = window.read()
     if event == sg.WIN_CLOSED or event == 'Exit': # if user closes window or clicks cancel

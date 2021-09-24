@@ -2,7 +2,7 @@
 # Tested with sim800l module with ch340 usb serial uart to ttl 
 # Enumerate and open serial port,
 # input sms message and generate random delay ranging from 5 to 60 seconds between sends
-# open a sent logfile (text or csv)
+# TODO: open a sent logfile (text or csv)
 # TODO: multithreaded serial comms, progressbar, check if sim is inserted
 import re
 import sys, time, serial, serial.tools.list_ports, PySimpleGUI as sg
@@ -55,6 +55,7 @@ for i in range(len(theports)):
 if modem.port == '':
     # print('No GSM Modem')
     sg.Popup('Error', 'No GSM modem')
+    # todo: check if serial port is open first
     modem.close()
     window.close()
     sys.exit()
@@ -68,7 +69,15 @@ while True:
     if values [0] != '+639123456789' and values[1] != 'message':
         # TODO: Throw an exception if port error
         print('values changed')
-        smsinput=str(values[1]) + chr(26) + '\r\n'
+        # SMS only accepts 160 chars per message
+        smstemp=str(values[1])
+        smsinput = (smstemp[:160]) if len(smstemp) > 160 else smstemp
+        # print(smstemp)
+        # print(smsinput)
+        # if len(smsinput) >=160:
+        #     smsinput=smsinput[0:160]
+        #     print(smsinput)
+        smsinput=smsinput + chr(26) + '\r\n'
         smsinput=smsinput.encode()
         # print(smsinput)
         phonelist = str(values[0]).splitlines()
@@ -81,6 +90,7 @@ while True:
         modem.write(atcmd.encode())
         time.sleep(0.1)
         # print(repr(modem.readline()))
+        # set message format and charset to gsm
         atcmd='AT+CMGF=1\r\n'
         modem.write(atcmd.encode())
         # print(repr(modem.readline()))
