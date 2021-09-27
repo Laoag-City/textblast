@@ -67,7 +67,8 @@ while True:
         # print('clicked x',values[0], values[1])
         modem.close()
         break
-    if values [0] != '+639123456789' and values[1] != 'message':
+    # if values [0] != '+639123456789' and values[1] != 'message':
+    if values [0] != defaultnum and values[1] != defaultsms:
         # TODO: Throw an exception if port error
         print('values changed')
         # SMS only accepts 160 chars per message
