@@ -5,7 +5,7 @@
 # TODO: open a sent logfile (text or csv)
 # TODO: multithreaded serial comms, progressbar, check if a sim is present
 import re
-import sys, time, serial, serial.tools.list_ports, PySimpleGUI as sg
+import sys, random, time, serial, serial.tools.list_ports, PySimpleGUI as sg
 
 theports = serial.tools.list_ports.comports()
 modem = serial.Serial()
@@ -17,7 +17,8 @@ atresp = ''
 portdesc = ''
 phonelist = []
 smsinput = ''
-senddelay = 10
+senddelay = 4
+
 defaultnum='+639123456789'
 defaultsms='message'
 
@@ -54,8 +55,8 @@ for i in range(len(theports)):
 
 if modem.port == '':
     # print('No GSM Modem')
-    sg.Popup('Error', 'No GSM modem')
-    # todo: check if serial port is open first
+    sg.Popup('Error', 'GSM modem not found')
+    # TODO: check if serial port is open first
     modem.close()
     window.close()
     sys.exit()
@@ -66,7 +67,8 @@ while True:
         # print('clicked x',values[0], values[1])
         modem.close()
         break
-    if values [0] != '+639123456789' and values[1] != 'message':
+    # if values [0] != '+639123456789' and values[1] != 'message':
+    if values [0] != defaultnum and values[1] != defaultsms:
         # TODO: Throw an exception if port error
         print('values changed')
         # SMS only accepts 160 chars per message
@@ -74,9 +76,6 @@ while True:
         smsinput = (smstemp[:160]) if len(smstemp) > 160 else smstemp
         # print(smstemp)
         # print(smsinput)
-        # if len(smsinput) >=160:
-        #     smsinput=smsinput[0:160]
-        #     print(smsinput)
         smsinput=smsinput + chr(26) + '\r\n'
         smsinput=smsinput.encode()
         # print(smsinput)
@@ -112,5 +111,7 @@ while True:
             # print(repr(modem.readline()))
             time.sleep(senddelay-1)
             #TODO: randomize senddelay
+            senddelay=random.randint(4,18)
     else:
+        pass
         # print('values not changed', values[0], values[1])
