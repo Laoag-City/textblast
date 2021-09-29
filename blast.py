@@ -3,7 +3,7 @@
 # Enumerate and open serial port,
 # input sms message and generate random delay ranging from 5 to 60 seconds between sends
 # TODO: open a sent logfile (text or csv)
-# TODO: multithreaded serial comms, progressbar, check if sim is inserted
+# TODO: multithreaded serial comms, progressbar, check if a sim is present
 import re
 import sys, time, serial, serial.tools.list_ports, PySimpleGUI as sg
 
@@ -101,7 +101,7 @@ while True:
         time.sleep(0.1)
         for i in phonelist:
             # Note: AT commands and replies is terminated with \r\n
-            # SMS message ends with (^Z) to instruct send
+            # SMS message ends with ctrl-z to send
             atcmd='AT+CMGS=\"' + str(i) +'"\r\n'
             print(repr(atcmd))
             modem.write(atcmd.encode())
